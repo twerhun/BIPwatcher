@@ -48,7 +48,7 @@ jobs:
         run: echo "ARTIFACT_NAME=raport-$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Upload PDF as artifact with timestamp
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: "*.pdf"
