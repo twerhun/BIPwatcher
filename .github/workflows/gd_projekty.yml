@@ -2,7 +2,7 @@ name: gd_projekty
 
 on:
   schedule:
-    - cron: "0 8 * * *"
+    - cron: "0 8 * * *"   #8 UTC
   workflow_dispatch:
 
 jobs:
