@@ -1,0 +1,52 @@
+name: gd_projekty
+
+on:
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils tesseract-ocr tesseract-ocr-pol
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run main script
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PUSHOVER_API: ${{ secrets.PUSHOVER_API }}
+          PUSHOVER_KEY: ${{ secrets.PUSHOVER_KEY }}
+        run: |
+          python gd_projekty.py
+
+      - name: Commit changes if projekty.csv updated
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add projekty.csv
+          git diff --cached --quiet || git commit -m "Update projekty.csv [auto]"
+          git push
+
+      - name: Upload PDF as artifact with timestamp
+        uses: actions/upload-artifact@v3
+        with:
+          name: raport-${{ github.run_id }}-$(date +'%Y-%m-%d')
+          path: "*.pdf"
+        shell: bash
