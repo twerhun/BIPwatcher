@@ -2,7 +2,7 @@ name: gd_projekty
 
 on:
   schedule:
-    - cron: "0 7 * * *"
+    - cron: "0 8 * * *"
   workflow_dispatch:
 
 jobs:
@@ -44,9 +44,11 @@ jobs:
           git diff --cached --quiet || git commit -m "Update projekty.csv [auto]"
           git push
 
+      - name: Set artifact name with date
+        run: echo "ARTIFACT_NAME=raport-$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
       - name: Upload PDF as artifact with timestamp
         uses: actions/upload-artifact@v3
         with:
-          name: raport-${{ github.run_id }}-$(date +'%Y-%m-%d')
+          name: ${{ env.ARTIFACT_NAME }}
           path: "*.pdf"
-        shell: bash
