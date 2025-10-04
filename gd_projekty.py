@@ -120,7 +120,7 @@ def retry_request(func, max_attempts=5, delay=5):
                     })
                 raise RuntimeError(f'Nie udało połączyć się z zewnętrznym serwerem po {attempt} próbach.')
 
-projekty = pd.read_csv('./projekty.csv', index_col=0)
+projekty = pd.read_csv('./projekty.csv')
 
 url = 'https://bip.gminadabrowa.pl/8446/2899/projekty-2024-2029.html?Page=1'
 soup1 = retry_request(lambda:get_page(url))
@@ -135,7 +135,8 @@ for i in projdf['Sesja'].values:
         newprojdf.loc[len(newprojdf)]=[i, projdf[projdf['Sesja']==i]['Link'].values[0]]
         newprojdf.index +=1
         newprojdf.sort_index(inplace=True)
-    else: pass
+    else:
+        pass
 
 if newprojdf.empty:
     pass
